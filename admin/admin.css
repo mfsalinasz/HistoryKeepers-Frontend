@@ -1,0 +1,174 @@
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --muted: #757575;
+  --border: #e5e5e5;
+  
+  --accent: #000000;
+  --error: #d32f2f;
+  --success: #2e7d32;
+
+  --radius: 0px;
+  --container-width: 1440px;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { 
+  max-width: 100%; 
+  height: auto; 
+  display: block; 
+}
+
+a { 
+  color: inherit; 
+  text-decoration: none; 
+  transition: opacity 0.2s; 
+}
+
+a:hover { 
+  opacity: 0.6; 
+}
+
+/* Base Styles used in Admin */
+.input {
+  width: 100%; 
+  padding: 15px 0;
+  border: none; 
+  border-bottom: 2px solid #000;
+  font-size: 1.2rem; 
+  font-weight: 700; 
+  background: transparent; 
+  outline: none;
+  border-radius: 0;
+}
+
+.btn-primary {
+  background: #000; 
+  color: #fff; 
+  border: 1px solid #000;
+  width: 100%; 
+  padding: 15px; 
+  text-align: center;
+  text-transform: uppercase; 
+  font-weight: 700; 
+  cursor: pointer; 
+  font-size: 0.9rem;
+}
+
+.btn-primary:hover { 
+  background: #333; 
+}
+
+/* =========================================
+   ADMIN SPECIFIC STYLES
+   ========================================= */
+
+body.admin-page, body { 
+  background-color: #f4f4f4; 
+}
+
+.admin-container { 
+  max-width: 1000px; 
+  margin: 40px auto; 
+  background: #fff; 
+  padding: 40px; 
+  border: 1px solid #000; 
+}
+
+.admin-header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 30px; 
+  border-bottom: 2px solid #000; 
+  padding-bottom: 20px; 
+}
+
+.admin-header h1 {
+  margin: 0;
+  text-transform: uppercase;
+  font-size: 1.8rem;
+  font-weight: 900;
+}
+
+/* Tables */
+table { 
+  width: 100%; 
+  border-collapse: collapse; 
+  margin-top: 20px; 
+}
+
+th { 
+  text-align: left; 
+  border-bottom: 1px solid #999; 
+  padding: 10px; 
+  font-size: 0.8rem; 
+  text-transform: uppercase; 
+  font-weight: 700;
+}
+
+td { 
+  padding: 15px 10px; 
+  border-bottom: 1px solid #eee; 
+  vertical-align: middle;
+}
+
+.thumb { 
+  width: 50px; 
+  height: 50px; 
+  object-fit: cover; 
+  background: #eee; 
+}
+
+/* Admin Buttons */
+.btn-small { 
+  padding: 5px 10px; 
+  font-size: 0.7rem; 
+  background: #000; 
+  color: #fff; 
+  border: none; 
+  cursor: pointer; 
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.btn-red { 
+  background: #b00020; 
+}
+.btn-red:hover { 
+  background: #8a0019; 
+}
+
+/* Utility / Extracted Styles */
+.back-link { 
+  font-size: 0.9rem; 
+}
+
+.admin-card { 
+  background: #f9f9f9; 
+  padding: 20px; 
+  border: 1px solid #ddd; 
+}
+
+.admin-form { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 15px; 
+  margin-top: 15px; 
+}
+
+.col-span-2 { 
+  grid-column: span 2; 
+}

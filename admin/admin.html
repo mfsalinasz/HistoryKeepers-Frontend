@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin | History Keepers</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <div class="admin-container">
+    <div class="admin-header">
+      <h1>Panel de Admin</h1>
+      <a href="index.html" class="back-link">← Volver al Museo</a>
+    </div>
+
+    <div class="admin-card">
+      <h3 id="form-title">Ingresar Nueva Pieza al Archivo</h3>
+      <form id="add-form" class="admin-form">
+        <input type="text" id="name" placeholder="Nombre de la pieza" class="input" required>
+        <input type="text" id="category" placeholder="Categoría" class="input" required>
+        <input type="number" id="year" placeholder="Año" class="input"> 
+        <input type="text" id="desc" placeholder="Descripción histórica" class="input col-span-2">
+        
+        <button type="submit" class="btn btn-primary col-span-2">Guardar en Archivo</button>
+      </form>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Ref</th>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Año</th>
+        </tr>
+      </thead>
+      <tbody id="inventory-list">
+        </tbody>
+    </table>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>History Keepers — Museo Virtual Deportivo</title>
+  <meta name="description" content="Archivo digital de piezas deportivas: jerseys históricos, balones de época y memorabilia certificada." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+  <div class="announcement-bar">
+    Museo virtual a tu comodidad • Piezas de colección con valor histórico ¡Diviértete!
+  </div>
+  
+  <header class="topbar">
+    <div class="container wrap">
+      
+      <a href="index.html" class="header-center">
+        <span class="logo logo-text">HISTORY KEEPERS</span>
+      </a>
+
+      <div class="header-right actions">
+        <button class="top-btn" onclick="document.getElementById('search-box').focus()">
+          <i class="fa-solid fa-magnifying-glass"></i> Buscar
+        </button>
+        <button class="top-btn" data-open="login">Staff</button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="catalog-header" style="text-align: center; margin: 40px 0;">
+      <h1 style="font-weight: 900; text-transform: uppercase;">Archivo Histórico</h1>
+      <p style="color: var(--muted);">Colección Completa</p>
+    </section>
+    <section class="content"></section>
+  </main>
+
+  <footer class="mega-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2025 History Keepers. Preservando el legado deportivo.</p>
+      </div>
+    </div>
+  </footer>
+
+  <dialog id="dlg-login" class="modal">
+    <form method="dialog" id="login-form" class="modal-card-body">
+      <div class="modal-logo logo-text">HK</div>
+      <h2>ACCESO ADMINISTRATIVO</h2>
+      <p class="modal-subtitle">Área restringida al personal del museo.</p>
+
+      <label for="log-email">Identificador</label>
+      <input class="input" type="email" id="log-email" name="email" required />
+
+      <label for="log-password">Clave de Acceso</label>
+      <input class="input" type="password" id="log-password" name="password" required />
+
+      <button type="button" id="btn-login-submit" class="btn btn-primary">INGRESAR</button>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-login-error" class="modal">
+    <form method="dialog" class="modal-card-body">
+      <div class="modal-logo logo-text">HK</div>
+      <h2>ACCESO DENEGADO</h2>
+      <p class="modal-subtitle">
+        Credenciales incorrectas o no autorizadas.
+      </p>
+      <button type="submit" class="btn btn-primary" autofocus>REINTENTAR</button>
+    </form>
+  </dialog>
+
+  <div id="toast-notification" class="toast hidden"></div>
+
+  <script src="script.js"></script>
+
+  <button id="btn-back-to-top" class="btn btn-primary" title="Regresar arriba">
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
+</body>
+</html>
