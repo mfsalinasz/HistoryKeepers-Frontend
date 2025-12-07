@@ -384,3 +384,53 @@ footer.mega-footer {
 @media (max-width: 768px) {
   .footer-bottom { flex-direction: column; }
 }
+
+.search-container {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #e5e5e5; /* Línea sutil abajo */
+  margin-right: 20px;
+  padding-bottom: 5px;
+  transition: border-color 0.3s ease;
+}
+
+/* Efecto al hacer clic: la línea se pone negra */
+.search-container:focus-within {
+  border-color: #000;
+}
+
+#search-box {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: 'Inter', sans-serif; /* O la fuente que uses */
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 200px; /* Ancho fijo o variable */
+  color: #000;
+}
+
+#search-box::placeholder {
+  color: #999;
+}
+
+#btn-search-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0 0 10px;
+  color: #000;
+  font-size: 0.9rem;
+}
+
+#btn-search-icon:hover {
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  #search-box {
+    width: 120px; /* Más pequeño en móviles */
+  }
+}

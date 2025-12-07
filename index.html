@@ -25,10 +25,13 @@
       </a>
 
       <div class="header-right actions">
-        <button class="top-btn" onclick="document.getElementById('search-box').focus()">
-          <i class="fa-solid fa-magnifying-glass"></i> Buscar
-        </button>
-        <button class="top-btn" data-open="login">Staff</button>
+        <div class="search-container">
+          <input type="text" id="search-box" placeholder="BUSCAR EN EL ARCHIVO..." />
+          <button id="btn-search-icon">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </div>
+        <button class="top-btn" data-open="login">STAFF</button>
       </div>
 
     </div>

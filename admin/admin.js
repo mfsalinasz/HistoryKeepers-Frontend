@@ -1,137 +1,186 @@
-// ================================================================
-// History Keepers — Admin Logic (CRUD)
-// ================================================================
+const CLOUD_NAME = "dr1bjk9xk";
+const UPLOAD_PRESET = "HistoryKeepers";
 
 let products = [];
 let editingId = null;
 
-document.addEventListener("DOMContentLoaded", loadCollection);
-
+// Elementos del DOM
+const modal = document.getElementById("product-modal");
 const form = document.getElementById("add-form");
 const tableBody = document.getElementById("inventory-list");
-const formTitle = document.getElementById("form-title");
-const formBtn = form.querySelector("button[type='submit']");
+const modalTitle = document.getElementById("modal-title");
+const saveBtn = document.getElementById("btn-save");
+const previewImg = document.getElementById("preview-img");
+
+// Inicialización
+document.addEventListener("DOMContentLoaded", () => {
+    loadCollection();
+    
+    // Botón Agregar (Abre modal limpio)
+    document.getElementById("btn-open-add").onclick = () => openModal();
+    
+    // Botón Cerrar (X)
+    document.getElementById("btn-close-modal").onclick = () => closeModal();
+});
 
 // ----------------------------------------------------------------
-// 1. READ
+// 1. CARGA DE DATOS
 // ----------------------------------------------------------------
 async function loadCollection() {
     try {
-        const res = await fetch('/api/products');
-        const data = await res.json();
-        products = Array.isArray(data) ? data : (data.items || []);
+        const res = await fetch('http://localhost:8080/api/products');
+        products = await res.json();
         renderTable(products);
     } catch (e) {
         console.error("Error cargando colección", e);
-        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Error de conexión</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Error de conexión.</td></tr>`;
     }
 }
 
 function renderTable(items) {
-    if (items.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center;">El archivo está vacío.</td></tr>`;
+    if(items.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px;">El inventario está vacío.</td></tr>`;
         return;
     }
 
     tableBody.innerHTML = items.map(item => `
         <tr>
-            <td><img src="${(item.images && item.images[0]) || ''}" class="thumb"></td>
+            <td><img src="${item.imageUrl || 'https://placehold.co/100'}" class="thumb"></td>
             <td><strong>${item.name}</strong></td>
             <td>${item.category}</td>
-            <td>${item.price || 'N/A'}</td> 
-            <td>
-                <button data-id="${item._id}" class="btn-small btn-edit" style="margin-right:5px;">Editar</button>
-                <button data-id="${item._id}" class="btn-small btn-red btn-delete">Eliminar</button>
+            <td style="text-align:center;">
+                <button onclick="editPiece(${item.id})" class="btn-small btn-edit">Editar</button>
+                <button onclick="deletePiece(${item.id})" class="btn-small btn-red">Eliminar</button>
             </td>
         </tr>
     `).join('');
 }
 
 // ----------------------------------------------------------------
-// 2. EVENT DELEGATION (EDIT / DELETE)
+// 2. LÓGICA DE MODAL (ABRIR / CERRAR)
 // ----------------------------------------------------------------
-tableBody.addEventListener("click", (e) => {
-    const id = e.target.dataset.id;
-    if (!id) return;
+function openModal(item = null) {
+    form.reset();
+    previewImg.classList.add("hidden");
+    
+    if (item) {
+        // MODO EDICIÓN
+        editingId = item.id;
+        modalTitle.textContent = "Editar Pieza";
+        
+        document.getElementById("name").value = item.name;
+        document.getElementById("category").value = item.category;
+        document.getElementById("desc").value = item.description;
+        document.getElementById("image-url").value = item.imageUrl;
 
-    if (e.target.classList.contains("btn-delete")) {
-        deletePiece(id);
-    } else if (e.target.classList.contains("btn-edit")) {
-        startEdit(id);
+        // Mostrar foto actual
+        if(item.imageUrl) {
+            previewImg.src = item.imageUrl;
+            previewImg.classList.remove("hidden");
+        }
+    } else {
+        // MODO CREAR
+        editingId = null;
+        modalTitle.textContent = "Ingresar Nueva Pieza";
+        document.getElementById("image-url").value = "";
     }
-});
+
+    modal.showModal();
+}
+
+window.closeModal = () => {
+    modal.close();
+    form.reset();
+    editingId = null;
+};
 
 // ----------------------------------------------------------------
-// 3. CREATE & UPDATE
+// 3. GUARDAR (CREAR O EDITAR)
 // ----------------------------------------------------------------
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
     
-    const payload = {
-        name: document.getElementById("name").value,
-        category: document.getElementById("category").value,
-        price: document.getElementById("year").value, // Using price field for "Year"
-        description: document.getElementById("desc").value,
-        stock: 1, 
-        images: [] // Image handling omitted for simplicity (mock)
-    };
+    const fileInput = document.getElementById("file-upload");
+    
+    // Validación: Si es NUEVO y no hay foto, error.
+    // Si es EDICIÓN y no hay foto, está bien (usamos la vieja).
+    if (!editingId && fileInput.files.length === 0) {
+        alert("Debes seleccionar una fotografía para una pieza nueva.");
+        return;
+    }
 
     try {
-        const method = editingId ? 'PUT' : 'POST';
-        const url = editingId ? `/api/products/${editingId}` : '/api/products';
+        const originalBtnText = saveBtn.textContent;
+        saveBtn.textContent = "Procesando...";
+        saveBtn.disabled = true;
 
-        const res = await fetch(url, {
+        let finalImageUrl = document.getElementById("image-url").value;
+
+        // Si el usuario seleccionó un archivo nuevo, lo subimos
+        if (fileInput.files.length > 0) {
+            saveBtn.textContent = "Subiendo imagen...";
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            formData.append("upload_preset", UPLOAD_PRESET);
+
+            const cloudinaryRes = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                method: "POST",
+                body: formData
+            });
+            const imageData = await cloudinaryRes.json();
+            finalImageUrl = imageData.secure_url;
+        }
+
+        // Preparamos los datos para Neon
+        const payload = {
+            name: document.getElementById("name").value,
+            category: document.getElementById("category").value,
+            description: document.getElementById("desc").value,
+            imageUrl: finalImageUrl 
+        };
+
+        const method = editingId ? 'PUT' : 'POST';
+        const url = editingId 
+            ? `http://localhost:8080/api/products/${editingId}` 
+            : 'http://localhost:8080/api/products';
+
+        const serverRes = await fetch(url, {
             method: method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
-        if (res.ok) {
-            alert(editingId ? "Pieza actualizada." : "Pieza catalogada.");
-            resetForm();
+        if (serverRes.ok) {
+            closeModal();
             loadCollection();
+            alert(editingId ? "Pieza actualizada." : "Pieza creada exitosamente.");
         } else {
-            throw new Error("Error en la solicitud");
+            throw new Error("Error guardando en base de datos");
         }
+
     } catch (err) {
-        alert("Error al guardar cambios.");
+        console.error(err);
+        alert("Error: " + err.message);
+    } finally {
+        saveBtn.textContent = "Guardar Cambios";
+        saveBtn.disabled = false;
     }
 });
 
 // ----------------------------------------------------------------
-// 4. HELPERS
+// 4. ACCIONES (EDITAR / ELIMINAR)
 // ----------------------------------------------------------------
-function startEdit(id) {
-    const product = products.find(p => p._id === id);
-    if (!product) return;
+window.editPiece = (id) => {
+    const item = products.find(p => p.id === id);
+    if (item) openModal(item);
+};
 
-    editingId = id;
-    
-    // Populate Form
-    document.getElementById("name").value = product.name;
-    document.getElementById("category").value = product.category || "";
-    document.getElementById("year").value = product.price || "";
-    document.getElementById("desc").value = product.description || "";
-
-    // Change UI
-    formTitle.textContent = "Editar Pieza del Archivo";
-    formBtn.textContent = "Actualizar Pieza";
-    formTitle.scrollIntoView({ behavior: 'smooth' });
-}
-
-async function deletePiece(id) {
-    if(!confirm("¿Retirar esta pieza de la colección permanente?")) return;
+window.deletePiece = async (id) => {
+    if(!confirm("¿Estás seguro de retirar esta pieza del archivo? Esta acción no se puede deshacer.")) return;
     try {
-        await fetch(`/api/products/${id}`, { method: 'DELETE' });
+        await fetch(`http://localhost:8080/api/products/${id}`, { method: 'DELETE' });
         loadCollection();
     } catch(e) {
-        alert("No se pudo eliminar.");
+        alert("Error al eliminar.");
     }
-}
-
-function resetForm() {
-    form.reset();
-    editingId = null;
-    formTitle.textContent = "Ingresar Nueva Pieza al Archivo";
-    formBtn.textContent = "Guardar en Archivo";
-}
+};

@@ -8,14 +8,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/producto/producto.css" />
+  
+  <link rel="stylesheet" href="producto.css" />
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 <body>
   
   <header class="topbar">
     <div class="container wrap">  
-      <a href="/index.html" class="header-center">
+      <a href="../index.html" class="header-center">
         <span class="logo logo-text">HISTORY KEEPERS</span>
       </a>
     </div>
@@ -23,7 +25,8 @@
 
   <main class="container">
     <nav class="breadcrumb-nav">
-      <a href="/index.html">Inicio</a> <span>/</span> <a href="#" id="bc-cat">Catálogo</a> <span>/</span> <span id="bc-name" class="active">Producto</span>
+      <a href="../index.html">Inicio</a> <span>/</span> 
+      <span id="bc-name" class="active">Cargando...</span>
     </nav>
 
     <div class="product-layout" id="product-view" hidden>
@@ -32,27 +35,25 @@
         <div class="main-image-wrapper">
           <img id="p-main" src="" alt="Producto Principal" />
         </div>
-        <div class="thumbs-grid" id="p-thumbs">
-          </div>
+        <div class="thumbs-grid" id="p-thumbs" style="display:none;"></div>
       </section>
 
       <aside class="product-details">
         <div class="product-header">
-          <h1 id="p-title">Nombre del Producto</h1>
+          <h1 id="p-title">...</h1>
           <div class="product-meta">
-            <span id="p-category" class="meta-tag">Categoría</span>
+            <span id="p-category" class="meta-tag">...</span>
             <span class="meta-divider">•</span>
           </div>
         </div>
 
         <div class="product-description">
           <h3>Detalles</h3>
-          <p id="p-desc">Descripción del producto...</p>
+          <p id="p-desc">Cargando información histórica...</p>
           <ul id="p-highlights" class="highlights-list"></ul>
         </div>
+      </aside> </div> </main>
 
-  </main>
-
-  <script src="/producto/producto.js"></script>
+  <script src="producto.js"></script>
 </body>
 </html>

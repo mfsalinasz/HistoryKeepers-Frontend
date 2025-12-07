@@ -8,36 +8,74 @@
 <body>
 
   <div class="admin-container">
+    
     <div class="admin-header">
-      <h1>Panel de Admin</h1>
-      <a href="index.html" class="back-link">← Volver al Museo</a>
+      <h1>Inventario del Museo</h1>
+      <a href="../index.html" class="back-link">← Volver al Museo</a>
     </div>
 
-    <div class="admin-card">
-      <h3 id="form-title">Ingresar Nueva Pieza al Archivo</h3>
+    <div class="actions-bar">
+      <button id="btn-open-add" class="btn btn-primary" style="max-width: 250px;">
+        + Agregar Nueva Pieza
+      </button>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 80px;">Foto</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th style="width: 150px; text-align:center;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="inventory-list">
+          </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <dialog id="product-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">Nueva Pieza</h2>
+        <button id="btn-close-modal" class="close-btn">&times;</button>
+      </div>
+
       <form id="add-form" class="admin-form">
-        <input type="text" id="name" placeholder="Nombre de la pieza" class="input" required>
-        <input type="text" id="category" placeholder="Categoría" class="input" required>
-        <input type="number" id="year" placeholder="Año" class="input"> 
-        <input type="text" id="desc" placeholder="Descripción histórica" class="input col-span-2">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" id="name" class="input" required>
+        </div>
+
+        <div class="form-group">
+          <label>Categoría</label>
+          <input type="text" id="category" class="input" required>
+        </div>
         
-        <button type="submit" class="btn btn-primary col-span-2">Guardar en Archivo</button>
+        <div class="form-group col-span-2 photo-group">
+            <label>Fotografía</label>
+            <img id="preview-img" src="" class="hidden" style="width: 100px; height: 100px; object-fit: cover; margin-bottom: 10px; border: 1px solid #ccc;">
+            
+            <input type="file" id="file-upload" accept="image/*">
+            <p class="help-text">Deja vacío si no quieres cambiar la foto actual.</p>
+            <input type="hidden" id="image-url">
+        </div>
+
+        <div class="form-group col-span-2">
+          <label>Descripción Histórica</label>
+          <textarea id="desc" class="input" rows="4"></textarea>
+        </div>
+        
+        <div class="modal-footer col-span-2">
+           <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+           <button type="submit" class="btn btn-primary" id="btn-save">Guardar Cambios</button>
+        </div>
       </form>
     </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Ref</th>
-          <th>Nombre</th>
-          <th>Categoría</th>
-          <th>Año</th>
-        </tr>
-      </thead>
-      <tbody id="inventory-list">
-        </tbody>
-    </table>
-  </div>
+  </dialog>
 
   <script src="admin.js"></script>
 </body>

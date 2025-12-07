@@ -1,33 +1,33 @@
 // ================================================================
-// History Keepers — Main Logic (Simple Catalog)
+// History Keepers — Lógica Principal (Catálogo + Buscador)
 // ================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
     loadProducts();
     wireAuthForms();
-    wireSearch();
-    updateUIForAuthState();
+    wireSearch(); // Buscador activado
     window.addEventListener("scroll", toggleBackToTop);
 });
 
-// Admin Check
+// Verificación de Admin
 const isAdmin = () => localStorage.getItem("hk_admin_session") === "true";
 
 // ----------------------------------------------------------------
-// 1. Load Products (Grid Only)
+// 1. Cargar Productos (Con Filtro de Búsqueda)
 // ----------------------------------------------------------------
 async function loadProducts(query = "") {
     const container = document.querySelector(".content");
     container.innerHTML = '<div style="text-align:center; padding:40px;">Cargando archivo...</div>';
   
     try {
+        // Petición al Backend
         const res = await fetch('http://localhost:8080/api/products');
         if (!res.ok) throw new Error("Error de conexión");
         
         const data = await res.json();
         let items = Array.isArray(data) ? data : (data.items || []);
   
-        // Filter in frontend for simplicity (or use backend query)
+        // Lógica del Buscador (Filtrado en el navegador)
         if (query) {
             const q = query.toLowerCase();
             items = items.filter(i => 
@@ -36,16 +36,18 @@ async function loadProducts(query = "") {
             );
         }
   
+        // Mostrar mensaje si no hay resultados
         if (items.length === 0) {
             container.innerHTML = `
                 <div style="text-align:center; padding:60px;">
                     <h3>No se encontraron piezas.</h3>
                     <p>Intenta con otro término de búsqueda.</p>
+                    ${query ? '<button class="btn-primary" onclick="loadProducts()" style="max-width:200px; margin:20px auto;">Ver Todo</button>' : ''}
                 </div>`;
             return;
         }
   
-        // Render Grid
+        // Renderizar la Cuadrícula
         container.innerHTML = `
             <div class="grid">
                 ${items.map(item => createProductCard(item)).join('')}
@@ -59,83 +61,100 @@ async function loadProducts(query = "") {
 }
   
 function createProductCard(item) {
-    const imgUrl = (item.images && item.images[0]) ? item.images[0] : 'https://placehold.co/400x500?text=Sin+Imagen';
-    // Price hack for Year if needed
-    const yearDisplay = item.price ? `<span class="pc-price">${item.price}</span>` : '';
-
+    // Sincronización con Backend: Usar 'imageUrl' (singular)
+    const imgUrl = item.imageUrl || 'https://placehold.co/400x500?text=Sin+Imagen';
+    
+    // Navegación: Ruta relativa 'producto/producto.html'
     return `
-        <div class="product-card" onclick="window.location.href='/producto/producto.html?id=${item.id}'">
+        <div class="product-card" onclick="window.location.href='producto/producto.html?id=${item.id}'">
             <div class="pc-media">
                 <img src="${imgUrl}" alt="${item.name}" class="pc-img">
                 <span class="pc-badge">${item.category || 'Archivo'}</span>
             </div>
             <div class="pc-body">
                 <div class="pc-title">${item.name}</div>
-                ${yearDisplay}
             </div>
         </div>
     `;
 }
 
 // ----------------------------------------------------------------
-// 2. Search Logic
+// 2. Lógica del Buscador
 // ----------------------------------------------------------------
 function wireSearch() {
-   // Assuming there's a search input in a modal or just the button for now
-   // The User asked for a "Searcher" (Buscador).
-   // index.html has a button that focuses 'search-box', but 'search-box' might be missing.
-   // Let's create a dynamic search box behavior if it doesn't exist, or specific input handling.
-   
-   // For this iteration, let's look for a specific input if it exists, otherwise we might need to add one.
-   // The index.html currently has just a button. We should probably pop up a prompt or a modal, 
-   // but to keep it simple and clean as requested:
-   
-   const btn = document.querySelector("button[onclick*='search-box']");
-   if(btn) {
-       btn.onclick = (e) => {
+   const searchInput = document.getElementById("search-box");
+   const searchBtn = document.getElementById("btn-search-icon");
+
+   if (!searchInput) return;
+
+   // Opción A: Buscar al presionar "Enter"
+   searchInput.addEventListener("keypress", (e) => {
+       if (e.key === "Enter") {
            e.preventDefault();
-           const term = prompt("Buscar en el archivo:"); // Simple native prompt for now to avoid complexity
-           if(term) loadProducts(term);
-       };
+           const term = searchInput.value.trim();
+           loadProducts(term); // Llama a la carga con el filtro
+       }
+   });
+
+   // Opción B: Buscar al hacer clic en la lupa
+   if (searchBtn) {
+       searchBtn.addEventListener("click", (e) => {
+           e.preventDefault();
+           const term = searchInput.value.trim();
+           loadProducts(term);
+       });
    }
+   
+   searchInput.addEventListener("input", (e) => {
+       const term = e.target.value.trim();
+       // Pequeño delay para no saturar
+       clearTimeout(window.searchTimeout);
+       window.searchTimeout = setTimeout(() => loadProducts(term), 300);
+   });
 }
 
 // ----------------------------------------------------------------
-// 3. Auth & Admin Logic
+// 3. Autenticación y Admin
 // ----------------------------------------------------------------
 function wireAuthForms() {
     const loginBtn = document.querySelector('[data-open="login"]');
     const loginDialog = document.getElementById("dlg-login");
-    const loginForm = document.getElementById("login-form");
     const submitBtn = document.getElementById("btn-login-submit");
 
     if (loginBtn && loginDialog) {
         loginBtn.addEventListener("click", () => {
-            if (isAdmin()) {
-                window.location.href = "/admin/admin.html"; // Direct to admin if logged in
-            } else {
-                loginDialog.showModal();
-            }
+            loginDialog.showModal();
         });
     }
 
     if (submitBtn) {
-        submitBtn.addEventListener("click", () => {
-             const email = document.getElementById("log-email").value;
-             const pass = document.getElementById("log-password").value;
+        submitBtn.addEventListener("click", async () => {
+             const usernameVal = document.getElementById("log-email").value;
+             const passwordVal = document.getElementById("log-password").value;
              
-             // Hardcoded Auth for demo
-             if (email === "staff@hk.com" && pass === "archive2025") {
-                 localStorage.setItem("hk_admin_session", "true");
-                 window.location.href = "/admin/admin.html";
-             } else {
-                 document.getElementById("dlg-login").close();
-                 document.getElementById("dlg-login-error").showModal();
+             try {
+                 const res = await fetch('http://localhost:8080/api/auth/login', {
+                     method: 'POST',
+                     headers: { 'Content-Type': 'application/json' },
+                     body: JSON.stringify({ username: usernameVal, password: passwordVal })
+                 });
+
+                 if (res.ok) {
+                     localStorage.setItem("hk_admin_session", "true");
+                     document.getElementById("log-email").value = "";
+                     document.getElementById("log-password").value = "";
+                     window.location.href = "admin/admin.html";
+                 } else {
+                     alert("Credenciales incorrectas");
+                 }
+             } catch(e) {
+                 console.error(e);
+                 alert("Error de conexión con el servidor");
              }
         });
     }
 
-    // Modal close on backdrop click
+    // Cerrar modal al hacer click fuera
     document.querySelectorAll("dialog").forEach(d => {
         d.addEventListener("click", e => {
             if (e.target === d) d.close();
@@ -143,16 +162,6 @@ function wireAuthForms() {
     });
 }
 
-function updateUIForAuthState() {
-    const loginBtn = document.querySelector('[data-open="login"]');
-    if (loginBtn && isAdmin()) {
-        loginBtn.textContent = "PANEL ADMIN";
-    }
-}
-
-// ----------------------------------------------------------------
-// 4. Utilities
-// ----------------------------------------------------------------
 function toggleBackToTop() {
     const btn = document.getElementById("btn-back-to-top");
     if (!btn) return;
