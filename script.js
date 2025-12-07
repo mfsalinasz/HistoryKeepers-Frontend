@@ -21,7 +21,7 @@ async function loadProducts(query = "") {
   
     try {
         // Petición al Backend
-        const res = await fetch('http://localhost:8080/api/products');
+        const res = await fetch('https://historykeepers-backend-production.up.railway.app/api/products');
         if (!res.ok) throw new Error("Error de conexión");
         
         const data = await res.json();
@@ -61,10 +61,8 @@ async function loadProducts(query = "") {
 }
   
 function createProductCard(item) {
-    // Sincronización con Backend: Usar 'imageUrl' (singular)
     const imgUrl = item.imageUrl || 'https://placehold.co/400x500?text=Sin+Imagen';
     
-    // Navegación: Ruta relativa 'producto/producto.html'
     return `
         <div class="product-card" onclick="window.location.href='producto/producto.html?id=${item.id}'">
             <div class="pc-media">
@@ -133,7 +131,7 @@ function wireAuthForms() {
              const passwordVal = document.getElementById("log-password").value;
              
              try {
-                 const res = await fetch('http://localhost:8080/api/auth/login', {
+                 const res = await fetch('https://historykeepers-backend-production.up.railway.app/api/auth/login', {
                      method: 'POST',
                      headers: { 'Content-Type': 'application/json' },
                      body: JSON.stringify({ username: usernameVal, password: passwordVal })

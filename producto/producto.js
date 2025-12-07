@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   try {
-    const res = await fetch(`http://localhost:8080/api/products/${id}`);
+    const res = await fetch(`https://historykeepers-backend-production.up.railway.app/api/products/${id}`);
     
     if (!res.ok) throw new Error("Pieza no encontrada");
     

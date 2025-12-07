@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // ----------------------------------------------------------------
 async function loadCollection() {
     try {
-        const res = await fetch('http://localhost:8080/api/products');
+        const res = await fetch('https://historykeepers-backend-production.up.railway.app/api/products');
         products = await res.json();
         renderTable(products);
     } catch (e) {
@@ -141,8 +141,8 @@ form.addEventListener("submit", async (e) => {
 
         const method = editingId ? 'PUT' : 'POST';
         const url = editingId 
-            ? `http://localhost:8080/api/products/${editingId}` 
-            : 'http://localhost:8080/api/products';
+            ? `https://historykeepers-backend-production.up.railway.app/api/products/${editingId}` 
+            : 'https://historykeepers-backend-production.up.railway.app/api/products';
 
         const serverRes = await fetch(url, {
             method: method,
@@ -178,7 +178,7 @@ window.editPiece = (id) => {
 window.deletePiece = async (id) => {
     if(!confirm("¿Estás seguro de retirar esta pieza del archivo? Esta acción no se puede deshacer.")) return;
     try {
-        await fetch(`http://localhost:8080/api/products/${id}`, { method: 'DELETE' });
+        await fetch(`https://historykeepers-backend-production.up.railway.app/api/products/${id}`, { method: 'DELETE' });
         loadCollection();
     } catch(e) {
         alert("Error al eliminar.");
