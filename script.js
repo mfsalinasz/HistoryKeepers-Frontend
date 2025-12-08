@@ -1,12 +1,15 @@
+// cuando la página termina de cargar jalamos todo lo necesario
 document.addEventListener("DOMContentLoaded", () => {
     loadProducts();
     wireAuthForms();
     wireSearch();
     buildMenu();
     
+    // aquí escuchamos el scroll para mostrar u ocultar el botón de volver arriba
     window.addEventListener("scroll", toggleBackToTop);
 });
 
+// función que trae los productos del backend y arma las tarjetas del catálogo
 async function loadProducts(query = "") {
     const container = document.querySelector(".content");
     
@@ -60,6 +63,7 @@ async function loadProducts(query = "") {
     }
 }
 
+// función para conectar el buscador con el filtrado del catálogo
 function wireSearch() {
    const searchInput = document.getElementById("search-box");
    const searchBtn = document.getElementById("btn-search-icon");
@@ -72,16 +76,19 @@ function wireSearch() {
    });
 }
 
+// función que arma el modal de login y manda la petición de inicio de sesión al backend
 function wireAuthForms() {
     const loginBtn = document.querySelector('[data-open="login"]');
     const loginDialog = document.getElementById("dlg-login");
     const submitBtn = document.getElementById("btn-login-submit");
 
     if (loginBtn && loginDialog) {
+        // abre el modal cuando le pican al botón de staff
         loginBtn.addEventListener("click", () => loginDialog.showModal());
     }
 
     if (submitBtn) {
+        // aquí se manda la petición de login al servidor y si jala te manda al panel admin
         submitBtn.addEventListener("click", async () => {
              const emailVal = document.getElementById("log-email").value;
              const passVal = document.getElementById("log-password").value;
@@ -98,6 +105,7 @@ function wireAuthForms() {
                  });
 
                  if (res.ok) {
+                     // si el login pasa, guardamos una banderita en localStorage y mandamos al admin
                      localStorage.setItem("hk_admin_session", "true");
                      document.getElementById("log-email").value = "";
                      document.getElementById("log-password").value = "";
@@ -116,12 +124,14 @@ function wireAuthForms() {
     }
 
     if (loginDialog) {
+        // cierra el modal si le das click fuera de la tarjeta
         loginDialog.addEventListener("click", e => {
             if (e.target === loginDialog) loginDialog.close();
         });
     }
 }
 
+// función que controla el botón flotante para regresar hasta arriba de la página
 function toggleBackToTop() {
     const btn = document.getElementById("btn-back-to-top");
     if (!btn) return;
@@ -132,6 +142,7 @@ function toggleBackToTop() {
     btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// función que arma el menú de Inicio y Archivo Histórico y conecta los eventos
 function buildMenu() {
   const nav = document.querySelector("nav.menu");
   if (!nav) return;
@@ -146,6 +157,7 @@ function buildMenu() {
   </ul>`;
 
   nav.querySelectorAll("a").forEach(a => {
+    // cada click cambia la vista activa sin recargar la página
     a.addEventListener("click", e => {
       e.preventDefault();
       setActive(a.dataset.key);
@@ -155,6 +167,7 @@ function buildMenu() {
   setActive("inicio");
 }
 
+// función global para cambiar entre la vista de inicio y la del catálogo
 window.setActive = (key) => {
   document.querySelectorAll("nav.menu a").forEach(link => {
     link.classList.toggle("active", link.dataset.key === key);

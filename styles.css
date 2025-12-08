@@ -1,3 +1,4 @@
+/* estilos base del sitio: variables de color, tipografía y ancho máximo */
 :root {
   --bg: #ffffff;
   --text: #000000;
@@ -44,6 +45,7 @@ a {
   .container { padding: 0 20px; } 
 }
 
+/* barra de anuncio negra de hasta arriba, puro texto chiquito centrado */
 .announcement-bar {
   background-color: #000;
   color: #fff;
@@ -55,6 +57,7 @@ a {
   letter-spacing: 1px;
 }
 
+/* header pegado arriba: fondo blanco, borde y layout en grid para logo/centro/botones */
 header.topbar {
   background-color: #ffffff;
   border-bottom: 1px solid var(--border);
@@ -82,6 +85,7 @@ header.topbar {
   height: 100%;
 }
 
+/* logo de texto del header: mayúsculas, bold y letras separadas */
 .topbar .logo-text {
   font-size: 1.2rem; 
   font-weight: 900; 
@@ -91,6 +95,7 @@ header.topbar {
   line-height: 1;
 }
 
+/* zona derecha del header donde van los botones de acciones */
 .header-right {
   grid-column: 3;
   display: flex;
@@ -100,6 +105,7 @@ header.topbar {
   height: 100%;
 }
 
+/* botoncitos de texto del header (modo link, sin fondo ni bordes) */
 .top-btn {
   background: transparent !important;
   border: none;
@@ -114,6 +120,7 @@ header.topbar {
   line-height: 1;
 }
 
+/* ajuste responsivo del header para que en cel se comprima bien el grid */
 @media (max-width: 768px) {
   header.topbar { height: 70px; } 
   .topbar .wrap { grid-template-columns: 1fr auto; gap: 15px; }
@@ -121,6 +128,7 @@ header.topbar {
   .header-center { grid-column: 1; justify-content: flex-start; }
 }
 
+/* tabs de navegación tipo menú (Inicio / Archivo), con subrayado cuando está activo */
 .tab-nav ul {
   list-style: none;
   padding: 0;
@@ -145,6 +153,7 @@ header.topbar {
   border-bottom: 3px solid #000;
 }
 
+/* banner principal de bienvenida: bloque grande grisito con título centrado */
 .hero-banner {
   text-align: center;
   padding: 60px 20px;
@@ -155,12 +164,14 @@ header.topbar {
 
 section.content { padding-bottom: 60px; }
 
+/* grid donde se acomodan las tarjetas de productos/archivos */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 40px 20px;
 }
 
+/* tarjeta de producto: contenedor general clickeable */
 .product-card {
   display: flex;
   flex-direction: column;
@@ -169,6 +180,7 @@ section.content { padding-bottom: 60px; }
   position: relative;
 }
 
+/* área de la foto dentro de la tarjeta, con fondo gris y relación 3:4 */
 .pc-media {
   position: relative;
   background: #f7f7f7;
@@ -176,11 +188,13 @@ section.content { padding-bottom: 60px; }
   overflow: hidden;
 }
 
+/* imagen del producto rellenando el cuadro */
 .pc-img {
   width: 100%; height: 100%;
   object-fit: cover;
 }
 
+/* etiqueta negra en la esquina (categoría del producto) */
 .pc-badge {
   position: absolute; 
   top: 10px; left: 10px;
@@ -192,8 +206,10 @@ section.content { padding-bottom: 60px; }
   z-index: 2;
 }
 
+/* cuerpo de la tarjeta alineado a la izquierda */
 .pc-body { text-align: left; }
 
+/* título de la pieza: mayúsculas y negrita compacta */
 .pc-title {
   font-size: 0.9rem; 
   font-weight: 700; 
@@ -201,10 +217,12 @@ section.content { padding-bottom: 60px; }
   margin: 0;
 }
 
+/* ajuste del grid en pantallas chicas: 2 columnas y menos espacio */
 @media (max-width: 768px) {
   .grid { grid-template-columns: 1fr 1fr; gap: 10px; }
 }
 
+/* botón principal negro (CTA), ancho completo y texto en mayúsculas */
 .btn-primary {
   background: #000; 
   color: #fff; 
@@ -218,6 +236,7 @@ section.content { padding-bottom: 60px; }
   font-size: 0.9rem;
 }
 
+/* botón flotante redondo para regresar hasta arriba del todo */
 #btn-back-to-top {
   position: fixed; 
   bottom: 30px; right: 30px;
@@ -238,6 +257,7 @@ section.content { padding-bottom: 60px; }
   pointer-events: auto; 
 }
 
+/* barra del buscador: input pegado abajo con línea y espacito a la derecha */
 .search-container {
   display: flex;
   align-items: center;
@@ -258,8 +278,10 @@ section.content { padding-bottom: 60px; }
   width: 200px;
   color: #000;
 }
+
 #search-box::placeholder { color: #999; }
 
+/* botoncito de la lupa, sin borde y pegado al input */
 #btn-search-icon {
   background: none;
   border: none;
@@ -269,10 +291,12 @@ section.content { padding-bottom: 60px; }
   font-size: 0.9rem;
 }
 
+/* en cel el buscador se hace más corto para que quepa bien */
 @media (max-width: 768px) {
   #search-box { width: 120px; }
 }
 
+/* modal de login (dialog) centrado en pantalla con borde negro y sombra */
 dialog.modal {
   position: fixed; inset: 0; margin: auto;
   background: #fff; 
@@ -289,8 +313,10 @@ dialog.modal::backdrop {
   backdrop-filter: blur(5px);
 }
 
+/* cuerpo de la tarjeta del modal, puro relleno blanco con padding */
 .modal-card-body { padding: 40px; background: #fff; }
 
+/* logo de History Keepers dentro del modal, centrado y en mayúsculas */
 .modal-logo.logo-text {
   font-size: 1.5rem;
   font-weight: 900;
@@ -302,6 +328,7 @@ dialog.modal::backdrop {
   text-align: center;
 }
 
+/* título grande del modal (ej. "Acceso staff") */
 .modal h2 { 
   text-align: center; 
   text-transform: uppercase; 
@@ -310,11 +337,13 @@ dialog.modal::backdrop {
   font-weight: 800;
 }
 
+/* subtítulo del modal en gris, más chiquito */
 .modal-subtitle { 
   text-align: center; color: var(--muted); 
   margin-bottom: 30px; font-size: 0.9rem;
 }
 
+/* inputs del modal: cajitas grises con padding y full width */
 .modal .input {
   background: #f9f9f9; 
   border: 1px solid #ddd; 
@@ -324,12 +353,15 @@ dialog.modal::backdrop {
   font-size: 0.9rem; 
   border-radius: 0;
 }
+
+/* etiquetas de los campos del modal, en mayúsculas y negrita */
 .modal label { 
   font-size: 0.8rem; font-weight: 700; 
   display: block; margin-bottom: 5px; 
   text-transform: uppercase; 
 }
 
+/* footer final de la página, banda gris clara con división superior */
 footer.mega-footer {
   margin-top: 100px;
   padding: 40px 0;
@@ -337,6 +369,8 @@ footer.mega-footer {
   border-top: 1px solid var(--border);
   text-align: center;
 }
+
+/* línea final del footer con texto pequeñito y tono gris */
 .footer-bottom {
   display: flex;
   justify-content: center;
