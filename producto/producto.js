@@ -60,6 +60,14 @@ function renderProduct(p) {
 
   //Vaciamos el contenedor de miniaturas para que no estorbe
   if(thumbsContainer) thumbsContainer.innerHTML = ''; 
+
+  // MOSTRAR DATO CURIOSO
+  const display = document.getElementById("display-curioso");
+  if (p.datoCurioso) {
+      display.textContent = p.datoCurioso;
+  } else {
+      display.textContent = "Nadie ha compartido datos aún. ¡Sé el primero!";
+  }
 }
 
 // Función global para cambiar imagenes 
@@ -68,3 +76,36 @@ window.setMainImage = (src, btn) => {
   document.querySelectorAll(".thumb-btn").forEach(b => b.classList.remove("active"));
   if(btn) btn.classList.add("active");
 };
+
+// FUNCIÓN PARA GUARDAR (Conecta con el Controller)
+async function enviarDato() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const texto = document.getElementById("input-curioso").value;
+
+  if (!texto.trim()) return alert("Escribe algo primero.");
+
+  try {
+    const btn = document.querySelector("button[onclick='enviarDato()']");
+    btn.textContent = "Enviando...";
+    btn.disabled = true;
+
+    // Hacemos el POST al endpoint que creamos
+    const res = await fetch(`https://historykeepers-backend-production.up.railway.app/api/products/${id}/curioso`, {
+      method: 'POST',
+      body: texto
+    });
+
+    if (res.ok) {
+      alert("¡Dato agregado!");
+      window.location.reload(); // Recargar para ver el cambio
+    } else {
+      alert("Error al guardar.");
+      btn.disabled = false;
+      btn.textContent = "Agregar Aporte";
+    }
+  } catch (e) {
+    console.error(e);
+    alert("Error de conexión");
+  }
+}
