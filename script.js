@@ -4,9 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
     wireAuthForms();
     wireSearch();
     buildMenu();
-    
-    // aquí escuchamos el scroll para mostrar u ocultar el botón de volver arriba
-    window.addEventListener("scroll", toggleBackToTop);
 });
 
 // función que trae los productos del backend y arma las tarjetas del catálogo
@@ -143,18 +140,6 @@ function wireAuthForms() {
             if (e.target === loginDialog) loginDialog.close();
         });
     }
-}
-
-
-// función que controla el botón flotante para regresar hasta arriba de la página
-function toggleBackToTop() {
-    const btn = document.getElementById("btn-back-to-top");
-    if (!btn) return;
-    
-    if (window.scrollY > 300) btn.classList.add("show");
-    else btn.classList.remove("show");
-    
-    btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // función que arma el menú de Inicio y Archivo Histórico y conecta los eventos
