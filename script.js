@@ -118,7 +118,7 @@ function wireAuthForms() {
                     document.getElementById("log-password").value = "";
 
                     
-                    if (datos.username === "SuperAdmin") {
+                    if (datos.username === "Superadmin") {
                         window.location.href = "superadmin/superadmin.html";
                     } else {
                         
