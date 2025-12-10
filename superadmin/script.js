@@ -1,5 +1,5 @@
 // URL base del backend para usuarios
-const URL_API_USUARIOS = "http://localhost:8080/api/usuarios";
+const URL_API_USUARIOS = "https://historykeepers-backend-production.up.railway.app/api/usuarios";
 
 let usuarios = [];
 let idEditando = null;
