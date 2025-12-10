@@ -107,17 +107,15 @@ formulario.addEventListener("submit", async (evento) => {
             nombreCompleto: document.getElementById("campo-nombre-completo").value
         };
 
-        let metodo;
-        if (idEditando) {
-            metodo = "PUT";
-        } else {
-            metodo = "POST";
-        }
+        const esEdicion = idEditando !== null;
 
+        let metodo;
         let url;
-        if (idEditando) {
+        if (esEdicion) {
+            metodo = "PUT";
             url = URL_API_USUARIOS + "/" + idEditando;
         } else {
+            metodo = "POST";
             url = URL_API_USUARIOS;
         }
 
@@ -128,9 +126,24 @@ formulario.addEventListener("submit", async (evento) => {
         });
 
         if (respuesta.ok) {
+            const usuarioGuardado = await respuesta.json();
+
             cerrarModal();
-            await cargarUsuarios();
-            if (idEditando) {
+
+            if (esEdicion) {
+                for (let i = 0; i < usuarios.length; i++) {
+                    if (usuarios[i].id === usuarioGuardado.id) {
+                        usuarios[i] = usuarioGuardado;
+                        break;
+                    }
+                }
+            } else {
+                usuarios.push(usuarioGuardado);
+            }
+
+            pintarTabla(usuarios);
+
+            if (esEdicion) {
                 alert("Usuario actualizado.");
             } else {
                 alert("Usuario creado correctamente.");
