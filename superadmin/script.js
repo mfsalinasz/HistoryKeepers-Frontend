@@ -46,7 +46,10 @@ function pintarTabla(lista) {
         return;
     }
 
-    cuerpoTabla.innerHTML = lista.map(usuario => `
+    let html = "";
+    for (let i = 0; i < lista.length; i++) {
+        const usuario = lista[i];
+        html += `
         <tr>
             <td>${usuario.id}</td>
             <td><strong>${usuario.username}</strong></td>
@@ -57,11 +60,13 @@ function pintarTabla(lista) {
                 <button onclick="eliminarUsuario(${usuario.id})" class="btn-small btn-red">Eliminar</button>
             </td>
         </tr>
-    `).join('');
+        `;
+    }
+    cuerpoTabla.innerHTML = html;
 }
 
 //Para abrir el modal
-function abrirModal(usuario = null) {
+function abrirModal(usuario) {
     formulario.reset();
 
     if (usuario) {
@@ -102,10 +107,19 @@ formulario.addEventListener("submit", async (evento) => {
             nombreCompleto: document.getElementById("campo-nombre-completo").value
         };
 
-        const metodo = idEditando ? "PUT" : "POST";
-        const url = idEditando
-            ? `${URL_API_USUARIOS}/${idEditando}`
-            : URL_API_USUARIOS;
+        let metodo;
+        if (idEditando) {
+            metodo = "PUT";
+        } else {
+            metodo = "POST";
+        }
+
+        let url;
+        if (idEditando) {
+            url = URL_API_USUARIOS + "/" + idEditando;
+        } else {
+            url = URL_API_USUARIOS;
+        }
 
         const respuesta = await fetch(url, {
             method: metodo,
@@ -116,7 +130,11 @@ formulario.addEventListener("submit", async (evento) => {
         if (respuesta.ok) {
             cerrarModal();
             await cargarUsuarios();
-            alert(idEditando ? "Usuario actualizado." : "Usuario creado correctamente.");
+            if (idEditando) {
+                alert("Usuario actualizado.");
+            } else {
+                alert("Usuario creado correctamente.");
+            }
         } else {
             throw new Error("Error al guardar el usuario en la base de datos.");
         }
@@ -141,7 +159,7 @@ window.eliminarUsuario = async (id) => {
     if (!confirm("¿Estás seguro de eliminar este usuario? Esta acción no se puede deshacer.")) return;
 
     try {
-        const respuesta = await fetch(`${URL_API_USUARIOS}/${id}`, {
+        const respuesta = await fetch(URL_API_USUARIOS + "/" + id, {
             method: "DELETE"
         });
 
