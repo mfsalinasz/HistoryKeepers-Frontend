@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>SuperAdmin | History Keepers</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="admin-container">
+    
+    <div class="admin-header">
+      <h1>Gestión de Usuarios</h1>
+      <a href="../index.html" class="back-link">← Volver al Museo</a>
+    </div>
+
+    <div class="actions-bar">
+      <button id="btn-abrir-agregar" class="btn btn-primary" style="max-width: 260px;">
+        + Agregar nuevo usuario
+      </button>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 60px;">ID</th>
+            <th>Usuario</th>
+            <th>Correo</th>
+            <th>Nombre completo</th>
+            <th style="width: 150px; text-align:center;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="lista-usuarios">
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <dialog id="usuario-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="titulo-modal">Nuevo usuario</h2>
+        <button id="btn-cerrar-modal" class="close-btn">&times;</button>
+      </div>
+
+      <form id="form-usuario" class="admin-form">
+        <div class="form-group">
+          <label>Usuario</label>
+          <input type="text" id="campo-username" class="input" required>
+        </div>
+
+        <div class="form-group">
+          <label>Contraseña</label>
+          <input type="password" id="campo-password" class="input" required>
+        </div>
+
+        <div class="form-group">
+          <label>Correo electrónico</label>
+          <input type="email" id="campo-correo" class="input" required>
+        </div>
+
+        <div class="form-group">
+          <label>Nombre completo</label>
+          <input type="text" id="campo-nombre-completo" class="input" required>
+        </div>
+
+        <div class="modal-footer col-span-2">
+          <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-guardar">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>

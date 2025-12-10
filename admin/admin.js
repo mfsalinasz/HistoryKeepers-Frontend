@@ -16,16 +16,12 @@ const previewImg = document.getElementById("preview-img");
 document.addEventListener("DOMContentLoaded", () => {
     loadCollection();
     
-    // Botón Agregar (Abre modal limpio)
     document.getElementById("btn-open-add").onclick = () => openModal();
     
-    // Botón Cerrar (X)
     document.getElementById("btn-close-modal").onclick = () => closeModal();
 });
 
-// ----------------------------------------------------------------
-// 1. CARGA DE DATOS
-// ----------------------------------------------------------------
+//Cargar los datos
 async function loadCollection() {
     try {
         const res = await fetch('https://historykeepers-backend-production.up.railway.app/api/products');
@@ -56,15 +52,13 @@ function renderTable(items) {
     `).join('');
 }
 
-// ----------------------------------------------------------------
-// 2. LÓGICA DE MODAL (ABRIR / CERRAR)
-// ----------------------------------------------------------------
+//Para la función del modal
 function openModal(item = null) {
     form.reset();
     previewImg.classList.add("hidden");
     
     if (item) {
-        // MODO EDICIÓN
+        
         editingId = item.id;
         modalTitle.textContent = "Editar Pieza";
         
@@ -73,13 +67,13 @@ function openModal(item = null) {
         document.getElementById("desc").value = item.description;
         document.getElementById("image-url").value = item.imageUrl;
 
-        // Mostrar foto actual
+        
         if(item.imageUrl) {
             previewImg.src = item.imageUrl;
             previewImg.classList.remove("hidden");
         }
     } else {
-        // MODO CREAR
+        
         editingId = null;
         modalTitle.textContent = "Ingresar Nueva Pieza";
         document.getElementById("image-url").value = "";
@@ -94,16 +88,15 @@ window.closeModal = () => {
     editingId = null;
 };
 
-// ----------------------------------------------------------------
-// 3. GUARDAR (CREAR O EDITAR)
-// ----------------------------------------------------------------
+
+// Guardar
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
     
     const fileInput = document.getElementById("file-upload");
     
-    // Validación: Si es NUEVO y no hay foto, error.
-    // Si es EDICIÓN y no hay foto, está bien (usamos la vieja).
+    // Pura validación
+
     if (!editingId && fileInput.files.length === 0) {
         alert("Debes seleccionar una fotografía para una pieza nueva.");
         return;
@@ -167,9 +160,6 @@ form.addEventListener("submit", async (e) => {
     }
 });
 
-// ----------------------------------------------------------------
-// 4. ACCIONES (EDITAR / ELIMINAR)
-// ----------------------------------------------------------------
 window.editPiece = (id) => {
     const item = products.find(p => p.id === id);
     if (item) openModal(item);

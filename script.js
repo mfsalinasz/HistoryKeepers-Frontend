@@ -88,38 +88,52 @@ function wireAuthForms() {
     }
 
     if (submitBtn) {
-        // aquí se manda la petición de login al servidor y si jala te manda al panel admin
+        // aquí se manda la petición de login al servidor y según el usuario se redirige
         submitBtn.addEventListener("click", async () => {
-             const emailVal = document.getElementById("log-email").value;
-             const passVal = document.getElementById("log-password").value;
-             
-             const originalText = submitBtn.textContent;
-             submitBtn.textContent = "Verificando...";
-             submitBtn.disabled = true;
+            const emailVal = document.getElementById("log-email").value;
+            const passVal = document.getElementById("log-password").value;
+            
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = "Verificando...";
+            submitBtn.disabled = true;
 
-             try {
-                 const res = await fetch('https://historykeepers-backend-production.up.railway.app/api/auth/login', {
-                     method: 'POST',
-                     headers: { 'Content-Type': 'application/json' },
-                     body: JSON.stringify({ username: emailVal, password: passVal })
-                 });
+            try {
+                const res = await fetch('https://historykeepers-backend-production.up.railway.app/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: emailVal, password: passVal })
+                });
 
-                 if (res.ok) {
-                     // si el login pasa, guardamos una banderita en localStorage y mandamos al admin
-                     localStorage.setItem("hk_admin_session", "true");
-                     document.getElementById("log-email").value = "";
-                     document.getElementById("log-password").value = "";
-                     window.location.href = "admin/admin.html";
-                 } else {
-                     alert("Credenciales incorrectas");
-                 }
-             } catch(e) {
-                 console.error(e);
-                 alert("Error de conexión con el servidor");
-             } finally {
-                 submitBtn.textContent = originalText;
-                 submitBtn.disabled = false;
-             }
+                if (res.ok) {
+                    // leemos los datos que regresa el backend (message, userId, username, etc.)
+                    const datos = await res.json();
+
+                    // guardamos banderas/básicos en localStorage
+                    localStorage.setItem("hk_admin_session", "true");
+                    localStorage.setItem("hk_admin_username", datos.username);
+                    localStorage.setItem("hk_admin_id", datos.userId);
+
+                    // limpiamos campos del formulario
+                    document.getElementById("log-email").value = "";
+                    document.getElementById("log-password").value = "";
+
+                    
+                    if (datos.username === "SuperAdmin") {
+                        window.location.href = "superadmin/superadmin.html";
+                    } else {
+                        
+                        window.location.href = "admin/admin.html";
+                    }
+                } else {
+                    alert("Credenciales incorrectas");
+                }
+            } catch (e) {
+                console.error(e);
+                alert("Error de conexión con el servidor");
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
         });
     }
 
@@ -130,6 +144,7 @@ function wireAuthForms() {
         });
     }
 }
+
 
 // función que controla el botón flotante para regresar hasta arriba de la página
 function toggleBackToTop() {
