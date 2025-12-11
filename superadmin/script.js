@@ -23,6 +23,11 @@ async function cargarUsuarios() {
     try {
         const respuesta = await fetch(URL_API_USUARIOS);
         usuarios = await respuesta.json();
+
+        usuarios.sort(function (a, b) {
+            return a.id - b.id;
+        });
+
         pintarTabla(usuarios);
     } catch (error) {
         console.error("Error cargando usuarios", error);
@@ -96,7 +101,6 @@ window.cerrarModal = () => {
 formulario.addEventListener("submit", async (evento) => {
     evento.preventDefault();
     try {
-        const textoOriginal = botonGuardar.textContent;
         botonGuardar.textContent = "Guardando...";
         botonGuardar.disabled = true;
 
@@ -126,22 +130,8 @@ formulario.addEventListener("submit", async (evento) => {
         });
 
         if (respuesta.ok) {
-            const usuarioGuardado = await respuesta.json();
-
             cerrarModal();
-
-            if (esEdicion) {
-                for (let i = 0; i < usuarios.length; i++) {
-                    if (usuarios[i].id === usuarioGuardado.id) {
-                        usuarios[i] = usuarioGuardado;
-                        break;
-                    }
-                }
-            } else {
-                usuarios.push(usuarioGuardado);
-            }
-
-            pintarTabla(usuarios);
+            await cargarUsuarios();
 
             if (esEdicion) {
                 alert("Usuario actualizado.");
