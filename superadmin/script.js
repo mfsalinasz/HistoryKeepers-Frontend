@@ -1,8 +1,8 @@
 // URL base del backend para usuarios
 const URL_API_USUARIOS = "https://historykeepers-backend-production.up.railway.app/api/usuarios";
 
-let usuarios = [];
-let idEditando = null;
+let usuarios = [];//Almacenará la lista de usuarios localmente para no hacer tantas peticiones
+let idEditando = null;// 
 
 // Elementos del DOM
 const modal = document.getElementById("usuario-modal");
@@ -90,6 +90,7 @@ function abrirModal(usuario) {
     modal.showModal();
 }
 
+//Para cerrar el modal
 window.cerrarModal = () => {
     modal.close();
     formulario.reset();
