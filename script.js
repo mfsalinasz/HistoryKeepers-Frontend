@@ -4,24 +4,37 @@ document.addEventListener("DOMContentLoaded", () => {
     wireAuthForms();
     wireSearch();
     buildMenu();
-    
-    // aquí escuchamos el scroll para mostrar u ocultar el botón de volver arriba
-    window.addEventListener("scroll", toggleBackToTop);
 });
 
 // función que trae los productos del backend y arma las tarjetas del catálogo
+// Variable global para guardar los productos traídos del Backend
+let allProductsData = [];
+
+// 1. Modificamos loadProducts para que guarde los datos y genere los filtros
 async function loadProducts(query = "") {
     const container = document.querySelector(".content");
     
-    if(!query) container.innerHTML = '<div style="text-align:center; padding:40px;">Cargando archivo...</div>';
+    // Si es la primera carga (sin búsqueda), mostramos loading
+    if(!query && allProductsData.length === 0) {
+        container.innerHTML = '<div style="text-align:center; padding:40px;">Cargando archivo...</div>';
+    }
   
     try {
-        const res = await fetch('https://historykeepers-backend-production.up.railway.app/api/products');
-        if (!res.ok) throw new Error("Error de conexión");
-        
-        const data = await res.json();
-        let items = Array.isArray(data) ? data : (data.items || []);
+        // Hacemos la petición al Backend una sola vez si no tenemos datos
+        if (allProductsData.length === 0) {
+            const res = await fetch('https://historykeepers-backend-production.up.railway.app/api/products');
+            if (!res.ok) throw new Error("Error de conexión");
+            const data = await res.json();
+            allProductsData = Array.isArray(data) ? data : (data.items || []);
+            
+            // Una vez que tenemos los datos del Back, generamos los botones de categorías
+            generateCategoryButtons(); 
+        }
+
+        // Trabajamos con la variable local 'items' para filtrar
+        let items = [...allProductsData];
   
+        // Si hay una búsqueda por texto (desde la lupa), filtramos
         if (query) {
             const q = query.toLowerCase();
             items = items.filter(i => 
@@ -31,36 +44,77 @@ async function loadProducts(query = "") {
             setActive('catalogo');
         }
   
-        if (items.length === 0) {
-            container.innerHTML = `
-                <div style="text-align:center; padding:60px;">
-                    <h3>No se encontraron piezas.</h3>
-                    <p>Intenta con otro término de búsqueda.</p>
-                    ${query ? '<button class="btn-primary" onclick="loadProducts()" style="max-width:200px; margin:20px auto;">Ver Todo</button>' : ''}
-                </div>`;
-            return;
-        }
-  
-        container.innerHTML = `
-            <div class="grid">
-                ${items.map(item => `
-                    <div class="product-card" onclick="window.location.href='producto/producto.html?id=${item.id}'">
-                        <div class="pc-media">
-                            <img src="${item.imageUrl || 'https://placehold.co/400x500?text=Sin+Imagen'}" alt="${item.name}" class="pc-img">
-                            <span class="pc-badge">${item.category || 'Archivo'}</span>
-                        </div>
-                        <div class="pc-body">
-                            <div class="pc-title">${item.name}</div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
+        renderGrid(items, container);
         
     } catch (error) {
         console.error(error);
         container.innerHTML = `<p style="text-align:center; color:red;">Error al conectar con el archivo histórico.</p>`;
     }
+}
+
+// 2. Nueva Función: Genera los botones dinámicamente basándose en lo que hay en la BD
+function generateCategoryButtons() {
+    const filterContainer = document.getElementById('category-filters');
+    if (!filterContainer) return;
+
+    // Extraemos las categorías únicas de los productos que llegaron del Backend
+    const categories = ['Todos', ...new Set(allProductsData.map(p => p.category).filter(Boolean))];
+
+    filterContainer.innerHTML = categories.map(cat => `
+        <button 
+            class="btn-filter" 
+            onclick="filterByCategory('${cat}')"
+            style="padding: 8px 16px; border: 1px solid #ccc; background: white; cursor: pointer; border-radius: 20px; transition: all 0.3s;"
+            onmouseover="this.style.background='#eee'"
+            onmouseout="this.style.background='white'"
+        >
+            ${cat}
+        </button>
+    `).join('');
+}
+
+// 3. Nueva Función: Se activa al hacer click en un botón de categoría
+function filterByCategory(category) {
+    const container = document.querySelector(".content");
+    
+    let filteredItems;
+
+    if (category === 'Todos') {
+        filteredItems = allProductsData;
+    } else {
+        // Filtramos usando el campo 'category' que viene de tu Product.java
+        filteredItems = allProductsData.filter(item => item.category === category);
+    }
+
+    renderGrid(filteredItems, container);
+}
+
+// 4. Función auxiliar para pintar las tarjetas (refactorización para no repetir código)
+function renderGrid(items, container) {
+    if (items.length === 0) {
+        container.innerHTML = `
+            <div style="text-align:center; padding:60px;">
+                <h3>No se encontraron piezas.</h3>
+                <p>Intenta con otra categoría o término.</p>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="grid">
+            ${items.map(item => `
+                <div class="product-card" onclick="window.location.href='producto/producto.html?id=${item.id}'">
+                    <div class="pc-media">
+                        <img src="${item.imageUrl || 'https://placehold.co/400x500?text=Sin+Imagen'}" alt="${item.name}" class="pc-img">
+                        <span class="pc-badge">${item.category || 'Archivo'}</span>
+                    </div>
+                    <div class="pc-body">
+                        <div class="pc-title">${item.name}</div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
 }
 
 // función para conectar el buscador con el filtrado del catálogo
@@ -143,18 +197,6 @@ function wireAuthForms() {
             if (e.target === loginDialog) loginDialog.close();
         });
     }
-}
-
-
-// función que controla el botón flotante para regresar hasta arriba de la página
-function toggleBackToTop() {
-    const btn = document.getElementById("btn-back-to-top");
-    if (!btn) return;
-    
-    if (window.scrollY > 300) btn.classList.add("show");
-    else btn.classList.remove("show");
-    
-    btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // función que arma el menú de Inicio y Archivo Histórico y conecta los eventos

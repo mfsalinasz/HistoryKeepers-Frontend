@@ -23,6 +23,11 @@ async function cargarUsuarios() {
     try {
         const respuesta = await fetch(URL_API_USUARIOS);
         usuarios = await respuesta.json();
+
+        usuarios.sort(function (a, b) {
+            return a.id - b.id;
+        });
+
         pintarTabla(usuarios);
     } catch (error) {
         console.error("Error cargando usuarios", error);
@@ -46,7 +51,10 @@ function pintarTabla(lista) {
         return;
     }
 
-    cuerpoTabla.innerHTML = lista.map(usuario => `
+    let html = "";
+    for (let i = 0; i < lista.length; i++) {
+        const usuario = lista[i];
+        html += `
         <tr>
             <td>${usuario.id}</td>
             <td><strong>${usuario.username}</strong></td>
@@ -57,11 +65,13 @@ function pintarTabla(lista) {
                 <button onclick="eliminarUsuario(${usuario.id})" class="btn-small btn-red">Eliminar</button>
             </td>
         </tr>
-    `).join('');
+        `;
+    }
+    cuerpoTabla.innerHTML = html;
 }
 
 //Para abrir el modal
-function abrirModal(usuario = null) {
+function abrirModal(usuario) {
     formulario.reset();
 
     if (usuario) {
@@ -91,7 +101,6 @@ window.cerrarModal = () => {
 formulario.addEventListener("submit", async (evento) => {
     evento.preventDefault();
     try {
-        const textoOriginal = botonGuardar.textContent;
         botonGuardar.textContent = "Guardando...";
         botonGuardar.disabled = true;
 
@@ -102,10 +111,17 @@ formulario.addEventListener("submit", async (evento) => {
             nombreCompleto: document.getElementById("campo-nombre-completo").value
         };
 
-        const metodo = idEditando ? "PUT" : "POST";
-        const url = idEditando
-            ? `${URL_API_USUARIOS}/${idEditando}`
-            : URL_API_USUARIOS;
+        const esEdicion = idEditando !== null;
+
+        let metodo;
+        let url;
+        if (esEdicion) {
+            metodo = "PUT";
+            url = URL_API_USUARIOS + "/" + idEditando;
+        } else {
+            metodo = "POST";
+            url = URL_API_USUARIOS;
+        }
 
         const respuesta = await fetch(url, {
             method: metodo,
@@ -116,7 +132,12 @@ formulario.addEventListener("submit", async (evento) => {
         if (respuesta.ok) {
             cerrarModal();
             await cargarUsuarios();
-            alert(idEditando ? "Usuario actualizado." : "Usuario creado correctamente.");
+
+            if (esEdicion) {
+                alert("Usuario actualizado.");
+            } else {
+                alert("Usuario creado correctamente.");
+            }
         } else {
             throw new Error("Error al guardar el usuario en la base de datos.");
         }
@@ -141,7 +162,7 @@ window.eliminarUsuario = async (id) => {
     if (!confirm("¿Estás seguro de eliminar este usuario? Esta acción no se puede deshacer.")) return;
 
     try {
-        const respuesta = await fetch(`${URL_API_USUARIOS}/${id}`, {
+        const respuesta = await fetch(URL_API_USUARIOS + "/" + id, {
             method: "DELETE"
         });
 
