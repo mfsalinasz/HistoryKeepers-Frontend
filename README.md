@@ -8,6 +8,7 @@ Prerrequisitos:
 * Un navegador web
 * VS Code
 * Instalar Live Preview
+* Link a la base de datos: jdbc:postgresql://ep-spring-union-a4bnt13g-pooler.us-east-1.aws.neon.tech/neondb?user=neondb_owner&password=npg_Xw1m2dgZDOEP&sslmode=require&channelBinding=require 
 
 Pasos para correrlo:
 
